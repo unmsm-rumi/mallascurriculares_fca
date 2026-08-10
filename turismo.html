@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malla Curricular - Turismo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --crema:       #e6fff5;
+            --rosa-claro:  #7fd9c4;
+            --rosa-medio:  #22a884;
+            --rosa-oscuro: #0f7a5f;
+            --rojo:        #0a5c47;
+            --sidebar-bg:  #0f7a5f;
+            --texto:       #06402e;
+            --borde:       #9fe3cf;
+            --sombra:      rgba(10,92,71,0.10);
+            --azul-barra:  #0f7a5f;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--crema);
+            color: var(--texto);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .panel-superior {
+            max-width: 1200px;
+            margin: 24px auto;
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            padding: 0 16px;
+        }
+
+        .progreso {
+            background-color: white;
+            border: 1px solid var(--borde);
+            padding: 20px 24px;
+            border-radius: 14px;
+            text-align: center;
+            min-width: 260px;
+            max-width: 380px;
+            flex: 1 1 260px;
+            box-shadow: 0 2px 12px var(--sombra);
+        }
+
+        .progreso p {
+            margin: 0 0 10px;
+            font-size: 0.9rem;
+            color: var(--texto);
+        }
+
+        .barra-externa {
+            width: 100%;
+            background-color: #cdf0e4;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 14px;
+            margin: 8px 0 4px;
+        }
+
+        .barra-interna {
+            height: 100%;
+            background: linear-gradient(90deg, #0a5c47, #22a884);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        #porcentaje { font-weight: 700; color: var(--rojo); }
+
+        .progreso button {
+            margin-top: 12px;
+            padding: 8px 18px;
+            background-color: var(--rojo);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .progreso button:hover {
+            background-color: var(--rosa-oscuro);
+            transform: translateY(-1px);
+        }
+
+        .selector-electivas {
+            background-color: white;
+            border: 1px solid var(--borde);
+            padding: 20px 24px;
+            border-radius: 14px;
+            min-width: 260px;
+            max-width: 520px;
+            flex: 1 1 300px;
+            box-shadow: 0 2px 12px var(--sombra);
+        }
+
+        .selector-electivas h3 {
+            margin: 0 0 6px;
+            font-size: 0.95rem;
+            color: var(--rojo);
+            font-weight: 700;
+        }
+
+        .selector-electivas .subtitulo {
+            font-size: 0.78rem;
+            color: #7a4a54;
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+
+        .areas-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .area-card {
+            border: 2px solid var(--borde);
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--crema);
+            position: relative;
+        }
+
+        .area-card:hover { border-color: #0a5c47; background: #e6fff5; }
+
+        .area-card.principal {
+            border-color: var(--rojo);
+            background: #e6fff5;
+            box-shadow: 0 0 0 1px var(--rojo);
+        }
+
+        .area-card.secundaria {
+            border-color: #0a5c47;
+            background: #f0fbf8;
+        }
+
+        .area-card .badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 20px;
+            margin-bottom: 4px;
+            letter-spacing: 0.04em;
+        }
+
+        .area-card.principal .badge { background: var(--rojo); color: white; }
+        .area-card.secundaria .badge { background: var(--rosa-medio); color: white; }
+        .area-card:not(.principal):not(.secundaria) .badge { display: none; }
+
+        .area-card .nombre {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--texto);
+            display: block;
+        }
+
+        .area-card .creditos-area {
+            font-size: 0.72rem;
+            color: #7a4a54;
+        }
+
+        .instruccion {
+            font-size: 0.75rem;
+            color: #7a4a54;
+            margin-top: 10px;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .resumen-creditos {
+            margin-top: 14px;
+            border-top: 1px solid var(--borde);
+            padding-top: 12px;
+        }
+
+        .resumen-creditos h4 {
+            font-size: 0.8rem;
+            color: var(--rojo);
+            margin: 0 0 8px;
+            font-weight: 600;
+        }
+
+        .fila-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+            font-size: 0.78rem;
+        }
+
+        .fila-area .label { flex: 1; color: var(--texto); }
+        .fila-area .mini-barra-ext {
+            flex: 2;
+            height: 8px;
+            background: #cdf0e4;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .fila-area .mini-barra-int {
+            height: 100%;
+            background: linear-gradient(90deg, #0a5c47, #22a884);
+            border-radius: 4px;
+            transition: width 0.4s;
+        }
+        .fila-area .cred-txt { width: 55px; text-align: right; color: #7a4a54; font-weight: 600; }
+
+        .malla-container {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding: 16px 20px 24px;
+            box-sizing: border-box;
+            scroll-snap-type: x mandatory;
+        }
+
+        .ciclo {
+            min-width: 220px;
+            max-width: 240px;
+            flex-shrink: 0;
+            background-color: white;
+            border-radius: 14px;
+            padding: 14px;
+            border: 1px solid var(--borde);
+            box-shadow: 0 2px 8px var(--sombra);
+            scroll-snap-align: start;
+        }
+
+        .ciclo h2 {
+            color: var(--rojo);
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin: 0 0 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--borde);
+        }
+
+        .ciclo-creditos {
+            text-align: center;
+            font-size: 0.72rem;
+            color: #7a4a54;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .curso {
+            position: relative;
+            padding: 9px 10px;
+            border-radius: 8px;
+            border: 1px solid #7fd9c4;
+            cursor: default;
+            transition: all 0.25s ease;
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 0.78rem;
+            line-height: 1.35;
+            background-color: #f0fbf8;
+            opacity: 0.55;
+        }
+
+        .curso.activo {
+            background-color: #cdf0e4;
+            border-color: #0a5c47;
+            color: var(--texto);
+            font-weight: 500;
+            cursor: pointer;
+            opacity: 1;
+        }
+        .curso.activo:hover { background-color: #a8e6cf; transform: translateY(-1px); box-shadow: 0 3px 8px var(--sombra); }
+
+        .curso.tildado {
+            text-decoration: line-through;
+            background-color: #cfe9df;
+            color: #6d8f83;
+            opacity: 1;
+            cursor: pointer;
+            border-color: var(--borde);
+        }
+
+        .curso.electiva-agencias     { border-left: 3px solid #0a5c47; }
+        .curso.electiva-hotelera     { border-left: 3px solid #22a884; }
+        .curso.electiva-gastronomica { border-left: 3px solid #66c2a3; }
+
+        .curso.oculto { display: none; }
+
+        .curso.bloqueado::after {
+            content: '🔒';
+            position: absolute;
+            right: 7px;
+            top: 7px;
+            font-size: 0.65rem;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            border: 1px solid var(--borde);
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 0.75rem;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+            display: none;
+            white-space: pre-line;
+            z-index: 100;
+            text-align: left;
+            min-width: 160px;
+            pointer-events: none;
+        }
+
+        .curso:hover .tooltip { display: block; }
+
+        .aviso {
+            text-align: center;
+            padding: 10px 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            border-radius: 8px;
+            margin: 0 20px 12px;
+            display: none;
+        }
+        .aviso.ok  { background: #d4edda; color: #155724; display: block; }
+        .aviso.mal { background: #f8d7da; color: #721c24; display: block; }
+    </style>
+</head>
+<body>
+
+<div id="aviso-creditos" class="aviso"></div>
+
+<div class="panel-superior">
+
+    <div class="progreso">
+        <p><strong>Créditos completados: <span id="creditos">0</span> / <span id="total-creditos">0</span></strong> <span style="color:#7a4a54;font-size:0.8rem;">(mín: 208)</span></p>
+        <div class="barra-externa">
+            <div class="barra-interna" id="barra-progreso"></div>
+        </div>
+        <p style="margin:4px 0 0;font-size:0.8rem;"><span id="porcentaje">0</span>% completado</p>
+        <button id="reset">↺ Restablecer progreso</button>
+    </div>
+
+    <div class="selector-electivas">
+        <h3>🎯 Elige tus especialidades</h3>
+        <p class="subtitulo">
+            Haz clic una vez para marcar como <strong>Principal</strong>, dos veces para <strong>Secundaria</strong>, tres veces para quitar.<br>
+            Puedes elegir las que quieras — el sistema te mostrará los cursos y calculará tus créditos.
+        </p>
+
+        <div class="areas-grid" id="areas-grid"></div>
+
+        <p class="instruccion">💡 Cada línea de especialización es una progresión de 5 cursos (Ciclos 6-10). Elige la que seguirás.</p>
+
+        <div class="resumen-creditos">
+            <h4>📊 Créditos por área seleccionada</h4>
+            <div id="resumen-areas"></div>
+        </div>
+    </div>
+
+</div>
+
+<div class="malla-container" id="contenedor-cursos"></div>
+
+<script>
+const cursos = [
+    // Ciclo 1
+    { nombre: "Lenguaje", creditos: 4, ciclo: 1 },
+    { nombre: "Métodos de estudio universitario", creditos: 3, ciclo: 1 },
+    { nombre: "Historia del Perú en el contexto mundial y contemporáneo", creditos: 3, ciclo: 1 },
+    { nombre: "Matemática I", creditos: 4, ciclo: 1 },
+    { nombre: "Desarrollo personal", creditos: 3, ciclo: 1 },
+    { nombre: "Inglés I", creditos: 2, ciclo: 1 },
+    // Ciclo 2
+    { nombre: "Investigación Académica", creditos: 3, ciclo: 2 },
+    { nombre: "Filosofía y Ética", creditos: 3, ciclo: 2 },
+    { nombre: "Realidad Nacional y Mundial", creditos: 3, ciclo: 2 },
+    { nombre: "Matemática II", creditos: 4, ciclo: 2, prereq: ["Matemática I"] },
+    { nombre: "Derechos Fundamentales, Ciudadanía y Derechos Humanos", creditos: 3, ciclo: 2 },
+    { nombre: "Inglés II", creditos: 2, ciclo: 2, prereq: ["Inglés I"] },
+    // Ciclo 3
+    { nombre: "Estadística Descriptiva", creditos: 4, ciclo: 3 },
+    { nombre: "Microeconomía", creditos: 3, ciclo: 3 },
+    { nombre: "Visión para el Desarrollo", creditos: 3, ciclo: 3, prereq: ["Investigación Académica"] },
+    { nombre: "Fundamentos de la Administración", creditos: 4, ciclo: 3 },
+    { nombre: "TIC's para la Gestión", creditos: 3, ciclo: 3 },
+    { nombre: "Fundamentos de la Contabilidad", creditos: 3, ciclo: 3 },
+    { nombre: "Desarrollo Sostenible", creditos: 2, ciclo: 3 },
+    { nombre: "Fundamentos del Turismo", creditos: 4, ciclo: 3 },
+    { nombre: "Inteligencia Artificial para la Administración", creditos: 3, ciclo: 3 },
+    // Ciclo 4
+    { nombre: "Estadística Inferencial", creditos: 4, ciclo: 4, prereq: ["Estadística Descriptiva"] },
+    { nombre: "Macroeconomía", creditos: 3, ciclo: 4, prereq: ["Microeconomía"] },
+    { nombre: "Derecho Empresarial", creditos: 3, ciclo: 4 },
+    { nombre: "Investigación Científica", creditos: 3, ciclo: 4, prereq: ["Visión para el Desarrollo"] },
+    { nombre: "Procesos Administrativos", creditos: 4, ciclo: 4, prereq: ["Fundamentos de la Administración"] },
+    { nombre: "Costos y Presupuestos", creditos: 3, ciclo: 4, prereq: ["Fundamentos de la Contabilidad"] },
+    { nombre: "Matemática Financiera", creditos: 4, ciclo: 4, prereq: ["Matemática II"] },
+    // Ciclo 5
+    { nombre: "Métodos Cuantitativos", creditos: 3, ciclo: 5, prereq: ["Estadística Inferencial"] },
+    { nombre: "Economía Turística", creditos: 3, ciclo: 5, prereq: ["Macroeconomía"] },
+    { nombre: "Legislación Turística", creditos: 2, ciclo: 5, prereq: ["Derecho Empresarial"] },
+    { nombre: "Turismo Sostenible", creditos: 3, ciclo: 5 },
+    { nombre: "Planificación Estratégica para el Desarrollo Turístico", creditos: 4, ciclo: 5 },
+    { nombre: "Patrimonio Cultural", creditos: 3, ciclo: 5 },
+    { nombre: "Geografía Turística", creditos: 3, ciclo: 5 },
+    // Ciclo 6
+    { nombre: "Investigación de Mercados Turístico", creditos: 3, ciclo: 6, prereq: ["Métodos Cuantitativos"] },
+    { nombre: "Técnicas de Investigación Cualitativa", creditos: 3, ciclo: 6, prereq: ["Investigación Académica"] },
+    { nombre: "Tourism Service Business Administration", creditos: 3, ciclo: 6, prereq: ["Fundamentos del Turismo"] },
+    { nombre: "Responsabilidad Social", creditos: 3, ciclo: 6 },
+    { nombre: "Patrimonio Natural", creditos: 3, ciclo: 6, prereq: ["Patrimonio Cultural"] },
+    { nombre: "Turismo Alternativo", creditos: 3, ciclo: 6 },
+    { nombre: "Elaboración de Paquetes y Circuitos Turísticos", creditos: 3, ciclo: 6, area: "agencias" },
+    { nombre: "Operaciones en Establecimientos de Hospedaje", creditos: 3, ciclo: 6, area: "hotelera" },
+    { nombre: "Tecnología de Comedor y Manipulación de Alimentos", creditos: 3, ciclo: 6, area: "gastronomica" },
+    // Ciclo 7
+    { nombre: "Tourism Services Marketing", creditos: 3, ciclo: 7, prereq: ["Investigación de Mercados Turístico"] },
+    { nombre: "Técnicas de Investigación Cuantitativa", creditos: 3, ciclo: 7, prereq: ["Técnicas de Investigación Cualitativa"] },
+    { nombre: "Comportamiento Organizacional", creditos: 3, ciclo: 7, prereq: ["Tourism Service Business Administration"] },
+    { nombre: "Logística en Empresas Turísticas", creditos: 3, ciclo: 7 },
+    { nombre: "Gestión de la Calidad Turística", creditos: 3, ciclo: 7, prereq: ["Fundamentos del Turismo"] },
+    { nombre: "Administración de Empresas de Transporte Turístico", creditos: 3, ciclo: 7, prereq: ["Elaboración de Paquetes y Circuitos Turísticos"], area: "agencias" },
+    { nombre: "Gestión de Reservas y Recepción", creditos: 3, ciclo: 7, prereq: ["Operaciones en Establecimientos de Hospedaje"], area: "hotelera" },
+    { nombre: "Gastronomía Peruana", creditos: 3, ciclo: 7, prereq: ["Tecnología de Comedor y Manipulación de Alimentos"], area: "gastronomica" },
+    // Ciclo 8
+    { nombre: "Marketing Digital Aplicado al Turismo", creditos: 3, ciclo: 8, prereq: ["Tourism Services Marketing"] },
+    { nombre: "Proyecto de Investigación", creditos: 3, ciclo: 8, prereq: ["Técnicas de Investigación Cuantitativa"] },
+    { nombre: "Gestión del Talento Humano en Empresas Turísticas", creditos: 3, ciclo: 8, prereq: ["Comportamiento Organizacional"] },
+    { nombre: "Organization of Congresses and Tourist Events", creditos: 3, ciclo: 8, prereq: ["Logística en Empresas Turísticas"] },
+    { nombre: "Gestión Pública en Turismo", creditos: 3, ciclo: 8, prereq: ["Planificación Estratégica para el Desarrollo Turístico"] },
+    { nombre: "Guía de Turismo", creditos: 3, ciclo: 8, prereq: ["Administración de Empresas de Transporte Turístico"], area: "agencias" },
+    { nombre: "Housekeeping", creditos: 3, ciclo: 8, prereq: ["Gestión de Reservas y Recepción"], area: "hotelera" },
+    { nombre: "Gastronomía Internacional", creditos: 3, ciclo: 8, prereq: ["Gastronomía Peruana"], area: "gastronomica" },
+    // Ciclo 9
+    { nombre: "Sales in Tourist Companies", creditos: 3, ciclo: 9, prereq: ["Investigación de Mercados Turístico"] },
+    { nombre: "Auditoría de Empresas Turísticas", creditos: 4, ciclo: 9, prereq: ["Tourism Services Marketing"] },
+    { nombre: "Creatividad e Innovación en Empresas Turísticas", creditos: 3, ciclo: 9 },
+    { nombre: "Formulación y Evaluación de Proyectos de Inversión Turística", creditos: 4, ciclo: 9 },
+    { nombre: "Trabajo de Investigación I", creditos: 4, ciclo: 9, prereq: ["Proyecto de Investigación"] },
+    { nombre: "Sistema de Reservas - GDS", creditos: 3, ciclo: 9, prereq: ["Guía de Turismo"], area: "agencias" },
+    { nombre: "Sistemas Operativos Hoteleros", creditos: 3, ciclo: 9, prereq: ["Housekeeping"], area: "hotelera" },
+    { nombre: "Bar y Coctelería", creditos: 3, ciclo: 9, prereq: ["Gastronomía Internacional"], area: "gastronomica" },
+    // Ciclo 10
+    { nombre: "Gestión de Destinos Turísticos", creditos: 3, ciclo: 10, prereq: ["Sales in Tourist Companies"] },
+    { nombre: "Trabajo de Investigación II", creditos: 4, ciclo: 10, prereq: ["Trabajo de Investigación I"] },
+    { nombre: "Strategic Management of Tourist Companies", creditos: 3, ciclo: 10, prereq: ["Auditoría de Empresas Turísticas"] },
+    { nombre: "Gestión de Alimentos y Bebidas", creditos: 3, ciclo: 10, prereq: ["Organization of Congresses and Tourist Events"] },
+    { nombre: "Gestión y Dirección de Establecimientos de Hospedaje", creditos: 3, ciclo: 10, prereq: ["Formulación y Evaluación de Proyectos de Inversión Turística"] },
+    { nombre: "Agencia de Viajes", creditos: 3, ciclo: 10, prereq: ["Sistema de Reservas - GDS"], area: "agencias" },
+    { nombre: "Diseño y Equipamiento de Establecimiento de Hospedaje", creditos: 3, ciclo: 10, prereq: ["Sistemas Operativos Hoteleros"], area: "hotelera" },
+    { nombre: "Enología y Sommelier", creditos: 3, ciclo: 10, prereq: ["Bar y Coctelería"], area: "gastronomica" },
+];
+
+const AREAS_INFO = {
+    agencias:     { label: "🧳 Agencias y Tour Operación", creditos: 15 },
+    hotelera:     { label: "🏨 Hotelería",                 creditos: 15 },
+    gastronomica: { label: "🍽️ Gastronomía",               creditos: 15 },
+};
+
+const CREDITOS_MINIMOS = 208;
+const carrera = 'turismo';
+const prefix  = carrera + '_';
+
+let estadoAreas = {};
+
+function guardarEstadoAreas() {
+    localStorage.setItem(prefix + 'estadoAreas', JSON.stringify(estadoAreas));
+}
+
+function cargarEstadoAreas() {
+    const guardado = localStorage.getItem(prefix + 'estadoAreas');
+    if (guardado) {
+        estadoAreas = JSON.parse(guardado);
+    } else {
+        const viejas = JSON.parse(localStorage.getItem(prefix + 'electivasSeleccionadas') || '[]');
+        estadoAreas = {};
+        viejas.forEach((a, i) => { estadoAreas[a] = i === 0 ? 'principal' : 'secundaria'; });
+    }
+}
+
+function areasSeleccionadas() {
+    return Object.keys(estadoAreas).filter(a => estadoAreas[a] !== null && estadoAreas[a] !== undefined);
+}
+
+function renderAreasGrid() {
+    const grid = document.getElementById('areas-grid');
+    grid.innerHTML = '';
+    Object.entries(AREAS_INFO).forEach(([key, info]) => {
+        const estado = estadoAreas[key];
+        const card = document.createElement('div');
+        card.className = 'area-card' + (estado ? ' ' + estado : '');
+        card.dataset.area = key;
+
+        const badge = document.createElement('span');
+        badge.className = 'badge';
+        badge.textContent = estado === 'principal' ? 'PRINCIPAL' : estado === 'secundaria' ? 'SECUNDARIA' : '';
+
+        const nombre = document.createElement('span');
+        nombre.className = 'nombre';
+        nombre.textContent = info.label;
+
+        const cred = document.createElement('span');
+        cred.className = 'creditos-area';
+        cred.textContent = info.creditos + ' créditos disponibles';
+
+        card.appendChild(badge);
+        card.appendChild(nombre);
+        card.appendChild(cred);
+
+        card.addEventListener('click', () => ciclarEstadoArea(key));
+        grid.appendChild(card);
+    });
+}
+
+function ciclarEstadoArea(area) {
+    const actual = estadoAreas[area];
+    if (!actual) {
+        estadoAreas[area] = 'principal';
+    } else if (actual === 'principal') {
+        estadoAreas[area] = 'secundaria';
+    } else {
+        delete estadoAreas[area];
+    }
+    guardarEstadoAreas();
+    renderAreasGrid();
+    renderResumenAreas();
+    renderCursos();
+    actualizarCreditos();
+}
+
+function renderResumenAreas() {
+    const contenedor = document.getElementById('resumen-areas');
+    const selec = areasSeleccionadas();
+    if (selec.length === 0) {
+        contenedor.innerHTML = '<p style="font-size:0.78rem;color:#7a4a54;margin:0;">Selecciona al menos un área para ver el resumen.</p>';
+        return;
+    }
+    contenedor.innerHTML = '';
+    selec.forEach(area => {
+        const info = AREAS_INFO[area];
+        const completados = cursos.filter(c => c.area === area && localStorage.getItem(prefix + c.nombre) === 'true')
+                                   .reduce((s, c) => s + c.creditos, 0);
+        const total = info.creditos;
+        const pct = Math.round((completados / total) * 100);
+
+        const fila = document.createElement('div');
+        fila.className = 'fila-area';
+        fila.innerHTML = `
+            <span class="label">${info.label.split(' ').slice(1).join(' ')}</span>
+            <div class="mini-barra-ext"><div class="mini-barra-int" style="width:${pct}%"></div></div>
+            <span class="cred-txt">${completados}/${total} cr</span>
+        `;
+        contenedor.appendChild(fila);
+    });
+}
+
+function actualizarCreditos() {
+    const selec = areasSeleccionadas();
+    let suma = 0, total = 0;
+
+    cursos.forEach(c => {
+        if (c.area && !selec.includes(c.area)) return;
+        total += c.creditos;
+        if (localStorage.getItem(prefix + c.nombre) === 'true') suma += c.creditos;
+    });
+
+    document.getElementById('creditos').textContent = suma;
+    document.getElementById('total-creditos').textContent = total;
+    const pct = total > 0 ? Math.round((suma / total) * 100) : 0;
+    document.getElementById('barra-progreso').style.width = pct + '%';
+    document.getElementById('porcentaje').textContent = pct;
+
+    const aviso = document.getElementById('aviso-creditos');
+    if (selec.length === 0) {
+        aviso.className = 'aviso';
+    } else if (total >= CREDITOS_MINIMOS) {
+        aviso.className = 'aviso ok';
+        aviso.textContent = `✅ Con las áreas seleccionadas tienes ${total} créditos disponibles — superas el mínimo de ${CREDITOS_MINIMOS}.`;
+    } else {
+        aviso.className = 'aviso mal';
+        aviso.textContent = `⚠️ Con las áreas seleccionadas solo tienes ${total} créditos disponibles — necesitas al menos ${CREDITOS_MINIMOS}. Faltan ${CREDITOS_MINIMOS - total} cr.`;
+    }
+
+    renderResumenAreas();
+}
+
+function renderCursos() {
+    const contenedor = document.getElementById('contenedor-cursos');
+    contenedor.innerHTML = '';
+    const selec = areasSeleccionadas();
+
+    const agrupados = {};
+    cursos.forEach(c => {
+        if (!agrupados[c.ciclo]) agrupados[c.ciclo] = [];
+        agrupados[c.ciclo].push(c);
+    });
+
+    Object.keys(agrupados).sort((a,b) => a-b).forEach(ciclo => {
+        const divCiclo = document.createElement('div');
+        divCiclo.className = 'ciclo';
+
+        const titulo = document.createElement('h2');
+        titulo.textContent = `${ciclo}° Ciclo`;
+        divCiclo.appendChild(titulo);
+
+        const creditosCiclo = agrupados[ciclo]
+            .filter(c => !c.area || selec.includes(c.area))
+            .reduce((s,c) => s + c.creditos, 0);
+        const credDiv = document.createElement('div');
+        credDiv.className = 'ciclo-creditos';
+        credDiv.textContent = creditosCiclo + ' créditos';
+        divCiclo.appendChild(credDiv);
+
+        agrupados[ciclo].forEach(c => {
+            const visible = !c.area || selec.includes(c.area);
+            const estado = localStorage.getItem(prefix + c.nombre) === 'true';
+            const prereqOk = !c.prereq || c.prereq.every(p => localStorage.getItem(prefix + p) === 'true');
+
+            const div = document.createElement('div');
+            div.className = 'curso';
+            if (!visible) { div.classList.add('oculto'); }
+            else if (estado) { div.classList.add('tildado'); }
+            else if (prereqOk) { div.classList.add('activo'); }
+            else { div.classList.add('bloqueado'); }
+
+            if (c.area) div.classList.add('electiva-' + c.area.replace('í','i').replace('ó','o'));
+
+            div.textContent = c.nombre;
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tooltip';
+            tooltip.textContent = `Créditos: ${c.creditos}\nPrerrequisitos: ${c.prereq ? c.prereq.join(', ') : 'Ninguno'}${c.area ? '\nÁrea: ' + AREAS_INFO[c.area].label : ''}`;
+            div.appendChild(tooltip);
+
+            if (div.classList.contains('activo') || div.classList.contains('tildado')) {
+                div.addEventListener('click', () => {
+                    const yaCompletado = localStorage.getItem(prefix + c.nombre) === 'true';
+
+                    if (!yaCompletado) {
+                        const creditosCiclo = cursos
+                            .filter(x => x.ciclo === c.ciclo && localStorage.getItem(prefix + x.nombre) === 'true')
+                            .reduce((s, x) => s + x.creditos, 0);
+                        if (creditosCiclo + c.creditos > 26) {
+                            alert('⚠️ Límite de 26 créditos por ciclo.\nYa tienes ' + creditosCiclo + ' cr en el ' + c.ciclo + '° ciclo y este curso tiene ' + c.creditos + ' cr (total: ' + (creditosCiclo + c.creditos) + ' cr).');
+                            return;
+                        }
+                    }
+
+                    localStorage.setItem(prefix + c.nombre, !yaCompletado);
+                    renderCursos();
+                    actualizarCreditos();
+                });
+            }
+
+            divCiclo.appendChild(div);
+        });
+
+        contenedor.appendChild(divCiclo);
+    });
+}
+
+function inicializarEventListeners() {
+    document.getElementById('reset').addEventListener('click', () => {
+        if (!confirm('¿Seguro que quieres restablecer todo el progreso?')) return;
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith(prefix)) localStorage.removeItem(key);
+        }
+        estadoAreas = {};
+        renderAreasGrid();
+        renderCursos();
+        actualizarCreditos();
+    });
+}
+
+function inicializar() {
+    cargarEstadoAreas();
+    renderAreasGrid();
+    renderCursos();
+    actualizarCreditos();
+    inicializarEventListeners();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', inicializar);
+} else {
+    inicializar();
+}
+</script>
+</body>
+</html>
